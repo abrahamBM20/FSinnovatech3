@@ -1,0 +1,17 @@
+# Archivos de Sistema
+.DS_Store
+Thumbs.db
+
+# Backend (Java/Spring Boot)
+backend/target/
+backend/.mvn/
+backend/*.jar
+backend/.idea/
+backend/.vscode/
+
+# Frontend (React/Vite)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.vscode/
