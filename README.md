@@ -192,22 +192,6 @@ docker-compose up -d
 
 ---
 
-## Pruebas Unitarias
-
-### Backend (Spring Boot)
-
-```bash
-cd backend/usuarios-service
-./mvnw.cmd test
-```
-
-### Frontend (React)
-
-```bash
-cd frontend
-npm run test
-```
-
 ## Contribución
 
 1. Crear una rama desde `develop`
