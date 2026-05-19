@@ -12,6 +12,7 @@ function ProfileView() {
     setUsername(user?.username || '')
   }, [user])
 
+
   async function handleSave(event) {
     event.preventDefault()
     if (!user) return

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  usuarios-service:
+    build: ./backend/usuarios-service
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=${NEON_DB_URL}
+      - DATABASE_USERNAME=${NEON_DB_USER}
+      - DATABASE_PASSWORD=${NEON_DB_PASSWORD}
+    networks:
+      - innovatech-net
+
+  proyectos-service:
+    build: ./backend/proyectos-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DATABASE_URL=${NEON_DB_URL}
+      - DATABASE_USERNAME=${NEON_DB_USER}
+      - DATABASE_PASSWORD=${NEON_DB_PASSWORD}
+    networks:
+      - innovatech-net
+
+  analitica-service:
+    build: ./backend/analitica-service
+    ports:
+      - "8000:8000"
+    networks:
+      - innovatech-net
+
+  api-gateway:
+    build: ./frontend/api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - usuarios-service
+      - proyectos-service
+      - analitica-service
+    networks:
+      - innovatech-net
+
+networks:
+  innovatech-net:
+    driver: bridge
