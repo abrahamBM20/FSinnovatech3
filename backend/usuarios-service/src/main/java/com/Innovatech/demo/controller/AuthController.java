@@ -26,7 +26,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/login")
-    // ¡AQUÍ ESTÁ LA CORRECCIÓN! Cambiamos UserDTO por AuthResponse
+ 
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(userService.authenticate(request));
     }
