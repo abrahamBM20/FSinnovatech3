@@ -1,5 +1,3 @@
-Aquí tienes el README completo para tu repositorio de GitHub:
-
 ```markdown
 # Innovatech Solutions - Portal de Gestión de Proyectos
 
