@@ -33,23 +33,9 @@ Sistema de gestión de proyectos y KPIs para Innovatech Solutions, empresa de co
 | Migraciones | Flyway |
 | Orquestación | Docker (opcional) |
 
----
 
-## Estructura del Proyecto
 
-```
-FSinnovatech3/
-├── backend/
-│   ├── usuarios-service/     # Spring Boot - Puerto 8080
-│   ├── proyectos-service/    # Spring Boot - Puerto 8081
-│   └── analitica-service/    # FastAPI - Puerto 8000
-├── frontend/
-│   ├── api-gateway/          # Express Gateway - Puerto 3000
-│   └── src/                  # React App - Puerto 5173
-└── README.md
-```
 
----
 
 ## Patrones de Diseño Implementados
 
