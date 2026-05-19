@@ -1,21 +1,21 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 const AuthContext = createContext(null)
+
+// API Gateway URL (cambiamos de 8080 a 3000)
+const GATEWAY_URL = 'http://localhost:3000'
+
 const STORAGE_KEYS = {
   token: 'innovatech_token',
   user: 'innovatech_user',
 }
 
-// AuthContext actúa como el ViewModel del módulo de autenticación.
-// Aquí se aísla la lógica de negocio, se consumen las APIs de KrakenD,
-// se guarda el JWT en localStorage y se expone el estado al resto de la aplicación.
 function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
       const storedUser = localStorage.getItem(STORAGE_KEYS.user)
       return storedUser ? JSON.parse(storedUser) : null
-    } catch (error) {
-      console.warn('No se pudo leer user de localStorage', error)
+    } catch {
       return null
     }
   })
@@ -54,11 +54,9 @@ function AuthProvider({ children }) {
     setError('')
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch(`${GATEWAY_URL}/api/auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       })
 
@@ -68,10 +66,6 @@ function AuthProvider({ children }) {
       }
 
       const data = await response.json()
-      if (!data.token || !data.user) {
-        throw new Error('Respuesta inválida del servidor')
-      }
-
       setToken(data.token)
       setUser(data.user)
       return true
@@ -95,13 +89,13 @@ function AuthProvider({ children }) {
     setError('')
 
     try {
-      const response = await fetch(`http://localhost:8080/api/auth/profile/${user.id}`, {
+      const response = await fetch(`${GATEWAY_URL}/api/auth/profile/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ username: newUsername }),
+        body: JSON.stringify(newUsername),
       })
 
       if (!response.ok) {
@@ -110,10 +104,6 @@ function AuthProvider({ children }) {
       }
 
       const updated = await response.json()
-      if (!updated.username) {
-        throw new Error('La API no devolvió el usuario actualizado')
-      }
-
       setUser((current) => ({ ...current, username: updated.username }))
       return true
     } catch (err) {
@@ -142,7 +132,7 @@ function AuthProvider({ children }) {
       logout,
       updateUsername,
     }),
-    [error, isAuthenticated, loading, token, user],
+    [error, isAuthenticated, loading, token, user]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
@@ -150,9 +140,7 @@ function AuthProvider({ children }) {
 
 function useAuth() {
   const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth debe usarse dentro de AuthProvider')
-  }
+  if (!context) throw new Error('useAuth debe usarse dentro de AuthProvider')
   return context
 }
 
