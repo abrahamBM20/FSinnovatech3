@@ -5,10 +5,11 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
 import httpx
+import os
 
 # ========== CONFIGURACIÓN ==========
-USUARIOS_SERVICE_URL = "http://localhost:8080"
-PROYECTOS_SERVICE_URL = "http://localhost:8081"
+USUARIOS_SERVICE_URL = os.getenv("USUARIOS_SERVICE_URL", "http://localhost:8080")
+PROYECTOS_SERVICE_URL = os.getenv("PROYECTOS_SERVICE_URL", "http://localhost:8081")
 
 # ========== SCHEMAS / DTOs ==========
 class KPIDashboard(BaseModel):

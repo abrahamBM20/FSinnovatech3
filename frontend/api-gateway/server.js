@@ -11,9 +11,9 @@ app.use(express.json());
 
 // Configuración de microservicios
 const SERVICES = {
-  usuarios: 'http://localhost:8080',
-  proyectos: 'http://localhost:8081',
-  analytics: 'http://localhost:8000'
+  usuarios: process.env.USUARIOS_SERVICE_URL || 'http://localhost:8080',
+  proyectos: process.env.PROYECTOS_SERVICE_URL || 'http://localhost:8081',
+  analytics: process.env.ANALYTICS_SERVICE_URL || 'http://localhost:8000'
 };
 
 // Logging de requests
