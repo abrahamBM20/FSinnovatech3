@@ -1,43 +1,58 @@
-version: '3.8'
-
 services:
   usuarios-service:
-    build: ./backend/usuarios-service
+    build:
+      context: ./backend/usuarios-service
     ports:
       - "8080:8080"
-    environment:
-      - DATABASE_URL=${NEON_DB_URL}
-      - DATABASE_USERNAME=${NEON_DB_USER}
-      - DATABASE_PASSWORD=${NEON_DB_PASSWORD}
+    env_file:
+      - ./backend/usuarios-service/.env
     networks:
       - innovatech-net
 
   proyectos-service:
-    build: ./backend/proyectos-service
+    build:
+      context: ./backend/proyectos-service
     ports:
       - "8081:8081"
-    environment:
-      - DATABASE_URL=${NEON_DB_URL}
-      - DATABASE_USERNAME=${NEON_DB_USER}
-      - DATABASE_PASSWORD=${NEON_DB_PASSWORD}
+    env_file:
+      - ./backend/proyectos-service/.env
     networks:
       - innovatech-net
 
   analitica-service:
-    build: ./backend/analitica-service
+    build:
+      context: ./backend/analitica-service
     ports:
       - "8000:8000"
+    environment:
+      USUARIOS_SERVICE_URL: http://usuarios-service:8080
+      PROYECTOS_SERVICE_URL: http://proyectos-service:8081
     networks:
       - innovatech-net
 
   api-gateway:
-    build: ./frontend/api-gateway
+    build:
+      context: ./frontend/api-gateway
     ports:
       - "3000:3000"
+    environment:
+      USUARIOS_SERVICE_URL: http://usuarios-service:8080
+      PROYECTOS_SERVICE_URL: http://proyectos-service:8081
+      ANALYTICS_SERVICE_URL: http://analitica-service:8000
     depends_on:
       - usuarios-service
       - proyectos-service
       - analitica-service
+    networks:
+      - innovatech-net
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
     networks:
       - innovatech-net
 
