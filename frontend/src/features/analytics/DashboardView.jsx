@@ -1,145 +1,86 @@
-import { useEffect, useState } from 'react'
-import { useAuth } from '../../context/AuthContext'
 import KPICards from '../../components/KPICards'
-
-const GATEWAY_URL = 'http://localhost:3000'
+import { useDashboardViewModel } from '../../viewmodels/useDashboardViewModel'
 
 function DashboardView() {
-  const { token } = useAuth()
-  const [dashboard, setDashboard] = useState(null)
-  const [proyectos, setProyectos] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    fetchDashboard()
-  }, [])
-
-  async function fetchDashboard() {
-    setLoading(true)
-    try {
-      const [dashboardRes, proyectosRes] = await Promise.all([
-        fetch(`${GATEWAY_URL}/api/analytics/dashboard`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${GATEWAY_URL}/api/proyectos`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ])
-
-      const dashboardData = await dashboardRes.json()
-      const proyectosData = await proyectosRes.json()
-
-      setDashboard(dashboardData.data || dashboardData)
-      setProyectos(Array.isArray(proyectosData) ? proyectosData : proyectosData.data || [])
-    } catch (err) {
-      setError('Error al cargar el dashboard')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (error) {
-    return (
-      <div style={{ padding: '40px', textAlign: 'center', color: '#ef4444' }}>
-        ⚠️ {error}
-      </div>
-    )
-  }
+  const vm = useDashboardViewModel()
 
   return (
-    <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px' }}>
-      <h1 style={{ fontSize: '1.75rem', color: '#0a2540', marginBottom: '8px' }}>
-        Dashboard Ejecutivo
-      </h1>
-      <p style={{ color: '#64748b', marginBottom: '32px' }}>
-        KPIs y métricas en tiempo real de Innovatech Solutions
-      </p>
+    <div className="content-stack">
+      <section className="page-card hero-banner page-card--padded">
+        <div className="hero-banner__content">
+          <span className="hero-badge">Centro de control</span>
+          <h1 className="hero-title">Visión ejecutiva del negocio en tiempo real</h1>
+          <p className="hero-copy">
+            Esta vista sintetiza métricas, proyectos y actividad reciente en una interfaz de alta
+            densidad informativa. Está diseñada para soportar crecimiento sin romper la estructura
+            visual ni la mantenibilidad.
+          </p>
 
-      <KPICards data={dashboard} loading={loading} />
+          <div className="hero-metrics">
+            <div className="hero-metric">
+              <span className="hero-metric__value">{vm.dashboard?.total_proyectos || 0}</span>
+              <span className="hero-metric__label">Proyectos registrados</span>
+            </div>
+            <div className="hero-metric">
+              <span className="hero-metric__value">{vm.dashboard?.proyectos_activos || 0}</span>
+              <span className="hero-metric__label">Activos en ejecución</span>
+            </div>
+            <div className="hero-metric">
+              <span className="hero-metric__value">{vm.dashboard?.avance_promedio || 0}%</span>
+              <span className="hero-metric__label">Avance promedio</span>
+            </div>
+            <div className="hero-metric">
+              <span className="hero-metric__value">{vm.dashboard?.tareas_pendientes || 0}</span>
+              <span className="hero-metric__label">Tareas pendientes</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Sección de proyectos recientes */}
-      <div
-        style={{
-          background: 'white',
-          borderRadius: '20px',
-          padding: '24px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-        }}
-      >
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '20px', color: '#0a2540' }}>
-          📋 Proyectos Recientes
-        </h2>
-        {loading ? (
-          <div>Cargando proyectos...</div>
+      {vm.error && <div className="alert alert--warning">{vm.error}</div>}
+
+      <KPICards data={vm.dashboard} loading={vm.loading} />
+
+      <section className="data-card">
+        <div className="section-head">
+          <div>
+            <h2>Proyectos destacados</h2>
+            <p>{vm.online ? 'Datos sincronizados con el backend' : 'Datos de respaldo para demostración'}</p>
+          </div>
+          <button className="secondary-button" type="button" onClick={vm.refresh}>
+            Actualizar
+          </button>
+        </div>
+
+        {vm.loading ? (
+          <div className="loading-state">Cargando proyectos...</div>
+        ) : vm.proyectos.length === 0 ? (
+          <div className="empty-state">No hay proyectos disponibles para mostrar.</div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {proyectos.slice(0, 5).map((proyecto) => (
-              <div
-                key={proyecto.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '12px 16px',
-                  background: '#f8fafc',
-                  borderRadius: '12px',
-                }}
-              >
+          <div className="table-shell">
+            {vm.proyectos.slice(0, 4).map((proyecto) => (
+              <div className="table-row" key={proyecto.id}>
                 <div>
                   <strong>{proyecto.nombre}</strong>
-                  <span
-                    style={{
-                      marginLeft: '12px',
-                      fontSize: '0.75rem',
-                      padding: '2px 8px',
-                      borderRadius: '20px',
-                      background:
-                        proyecto.estado === 'ACTIVO'
-                          ? '#dbeafe'
-                          : proyecto.estado === 'COMPLETADO'
-                          ? '#dcfce7'
-                          : '#fef3c7',
-                      color:
-                        proyecto.estado === 'ACTIVO'
-                          ? '#1d4ed8'
-                          : proyecto.estado === 'COMPLETADO'
-                          ? '#166534'
-                          : '#92400e',
-                    }}
-                  >
-                    {proyecto.estado}
-                  </span>
+                  <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                    {proyecto.descripcion || 'Sin descripción registrada'}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div
-                    style={{
-                      width: '80px',
-                      height: '6px',
-                      background: '#e2e8f0',
-                      borderRadius: '3px',
-                      overflow: 'hidden',
-                    }}
-                  >
+                <div style={{ minWidth: '180px' }}>
+                  <div className="progress-track">
                     <div
-                      style={{
-                        width: `${proyecto.porcentajeAvance || 0}%`,
-                        height: '100%',
-                        background: '#3b82f6',
-                        borderRadius: '3px',
-                      }}
+                      className="progress-fill"
+                      style={{ width: `${proyecto.porcentajeAvance || 0}%` }}
                     />
                   </div>
-                  <span style={{ fontSize: '0.85rem', minWidth: '45px' }}>
-                    {proyecto.porcentajeAvance || 0}%
-                  </span>
                 </div>
+                <strong>{proyecto.porcentajeAvance || 0}%</strong>
               </div>
             ))}
           </div>
         )}
-      </div>
-    </main>
+      </section>
+    </div>
   )
 }
 

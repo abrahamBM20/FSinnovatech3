@@ -1,9 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { API_GATEWAY_URL } from '../config/api'
 
 const AuthContext = createContext(null)
-
-// API Gateway URL (cambiamos de 8080 a 3000)
-const GATEWAY_URL = 'http://localhost:3000'
 
 const STORAGE_KEYS = {
   token: 'innovatech_token',
@@ -54,7 +52,7 @@ function AuthProvider({ children }) {
     setError('')
 
     try {
-      const response = await fetch(`${GATEWAY_URL}/api/auth/login`, {
+      const response = await fetch(`${API_GATEWAY_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -89,7 +87,7 @@ function AuthProvider({ children }) {
     setError('')
 
     try {
-      const response = await fetch(`${GATEWAY_URL}/api/auth/profile/${user.id}`, {
+      const response = await fetch(`${API_GATEWAY_URL}/api/auth/profile/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

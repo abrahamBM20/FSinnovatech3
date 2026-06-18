@@ -1,40 +1,34 @@
 function KPICards({ data, loading }) {
   if (loading) {
     return (
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} style={{ flex: 1, minWidth: '180px', background: '#f0f0f0', borderRadius: '16px', padding: '20px', animation: 'pulse 1.5s infinite' }} />
+      <div className="metric-grid" aria-busy="true" aria-label="Cargando indicadores">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div key={i} className="metric-card metric-card--loading" />
         ))}
       </div>
     )
   }
 
   const cards = [
-    { label: 'Total Proyectos', value: data?.total_proyectos || 0, icon: '📊', color: '#0a2540' },
-    { label: 'Proyectos Activos', value: data?.proyectos_activos || 0, icon: '🟢', color: '#10b981' },
-    { label: 'Avance Promedio', value: `${data?.avance_promedio || 0}%`, icon: '📈', color: '#3b82f6' },
-    { label: 'Tareas Pendientes', value: data?.tareas_pendientes || 0, icon: '⏳', color: '#f59e0b' },
+    { label: 'Total proyectos', value: data?.total_proyectos || 0, icon: '●' },
+    { label: 'Proyectos activos', value: data?.proyectos_activos || 0, icon: '▲' },
+    { label: 'Proyectos completados', value: data?.proyectos_completados || 0, icon: '■' },
+    { label: 'Avance promedio', value: `${data?.avance_promedio || 0}%`, icon: '↗' },
+    { label: 'Tareas pendientes', value: data?.tareas_pendientes || 0, icon: '⏳' },
+    { label: 'Completadas hoy', value: data?.tareas_completadas_hoy || 0, icon: '✓' },
   ]
 
   return (
-    <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '32px' }}>
+    <div className="metric-grid">
       {cards.map((card) => (
-        <div
+        <article
           key={card.label}
-          style={{
-            flex: 1,
-            minWidth: '180px',
-            background: 'white',
-            borderRadius: '20px',
-            padding: '20px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-            borderLeft: `4px solid ${card.color}`,
-          }}
+          className="metric-card"
         >
-          <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{card.icon}</div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#1e293b' }}>{card.value}</div>
-          <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>{card.label}</div>
-        </div>
+          <div className="metric-card__icon">{card.icon}</div>
+          <div className="metric-card__value">{card.value}</div>
+          <div className="metric-card__label">{card.label}</div>
+        </article>
       ))}
     </div>
   )

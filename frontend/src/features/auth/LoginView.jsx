@@ -1,114 +1,75 @@
 import { useState } from 'react'
-import { useAuth } from '../../context/AuthContext.jsx'
+import { useLoginViewModel } from '../../viewmodels/useLoginViewModel'
 
-// Vista de Login que consume AuthContext como ViewModel.
-// Separa la UI de la lógica de autenticación para cumplir MVVM.
 function LoginView() {
-  const { login, error, loading } = useAuth()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  async function handleSubmit(event) {
-    event.preventDefault()
-    await login(username.trim(), password)
-  }
+  const vm = useLoginViewModel()
 
   return (
-    <main
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '32px',
-        background: '#f4f5f7',
-      }}
-    >
-      <section
-        style={{
-          width: '100%',
-          maxWidth: '420px',
-          borderRadius: '18px',
-          padding: '32px',
-          background: '#ffffff',
-          boxShadow: '0 20px 50px rgba(15, 23, 42, 0.08)',
-        }}
-      >
-        <h2 style={{ margin: '0 0 16px', color: '#0a2540' }}>Iniciar sesión</h2>
-        <p style={{ margin: '0 0 24px', color: '#475569' }}>
-          Ingresa tu usuario y contraseña para acceder al portal de Innovatech.
-        </p>
+    <main className="login-shell">
+      <section className="page-card login-panel">
+        <div className="login-panel__hero">
+          <span className="hero-badge">Innovatech / Portal Directivo</span>
+          <h1>Control operativo para equipos, proyectos y analítica</h1>
+          <p>
+            Interfaz ejecutiva construida para tener una vista clara del negocio, con una
+            arquitectura simple, mantenible y preparada para evolucionar cuando los servicios
+            backend estén completos.
+          </p>
 
-        <form onSubmit={handleSubmit}>
-          <label style={{ display: 'block', marginBottom: '12px', color: '#334155' }}>
-            Usuario
-            <input
-              type="text"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              autoComplete="username"
-              required
-              style={{
-                width: '100%',
-                marginTop: '8px',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '1rem',
-              }}
-            />
-          </label>
-
-          <label style={{ display: 'block', marginBottom: '20px', color: '#334155' }}>
-            Contraseña
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
-              required
-              style={{
-                width: '100%',
-                marginTop: '8px',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '1rem',
-              }}
-            />
-          </label>
-
-          {error && (
-            <div
-              style={{
-                marginBottom: '18px',
-                padding: '12px 14px',
-                background: '#fee2e2',
-                color: '#991b1b',
-                borderRadius: '12px',
-              }}
-            >
-              {error}
+          <div className="login-panel__stats">
+            <div className="login-panel__stat">
+              <strong>MVVM ligero</strong>
+              <div>Lógica aislada en viewmodels para facilitar mantenimiento.</div>
             </div>
-          )}
+            <div className="login-panel__stat">
+              <strong>Diseño profesional</strong>
+              <div>Jerarquía visual, paneles, métricas y comportamiento responsive.</div>
+            </div>
+          </div>
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '14px 18px',
-              borderRadius: '14px',
-              border: 'none',
-              background: '#0a2540',
-              color: '#fff',
-              fontWeight: 700,
-              cursor: loading ? 'not-allowed' : 'pointer',
-            }}
-          >
-            {loading ? 'Validando...' : 'Entrar'}
-          </button>
-        </form>
+        <div className="login-panel__form">
+          <div className="section-head" style={{ alignItems: 'start' }}>
+            <div>
+              <h2>Acceso al portal</h2>
+              <p>Ingresa con tus credenciales para continuar.</p>
+            </div>
+          </div>
+
+          <form onSubmit={vm.handleSubmit}>
+            <div className="field-group">
+              <label htmlFor="username">Usuario</label>
+              <input
+                id="username"
+                type="text"
+                autoComplete="username"
+                value={vm.username}
+                onChange={(event) => vm.setUsername(event.target.value)}
+              />
+            </div>
+
+            <div className="field-group">
+              <label htmlFor="password">Contraseña</label>
+              <input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                value={vm.password}
+                onChange={(event) => vm.setPassword(event.target.value)}
+              />
+            </div>
+
+            {vm.error && (
+              <div className="alert alert--error" style={{ marginBottom: 16 }}>
+                {vm.error}
+              </div>
+            )}
+
+            <button className="primary-button" type="submit" disabled={vm.loading}>
+              {vm.loading ? 'Validando acceso...' : 'Entrar al portal'}
+            </button>
+          </form>
+        </div>
       </section>
     </main>
   )
