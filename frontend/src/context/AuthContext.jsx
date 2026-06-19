@@ -93,7 +93,7 @@ function AuthProvider({ children }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(newUsername),
+        body: JSON.stringify({ username: newUsername, role: user.role }),
       })
 
       if (!response.ok) {
@@ -103,6 +103,41 @@ function AuthProvider({ children }) {
 
       const updated = await response.json()
       setUser((current) => ({ ...current, username: updated.username }))
+      return true
+    } catch (err) {
+      setError(err.message || 'Error al actualizar el perfil')
+      return false
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function updateProfile(profileData) {
+    if (!user || !token) {
+      setError('No hay usuario autenticado')
+      return false
+    }
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch(`${API_GATEWAY_URL}/api/auth/profile/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(profileData),
+      })
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}))
+        throw new Error(body.error || body.message || 'No se pudo actualizar el perfil')
+      }
+
+      const updated = await response.json()
+      setUser((current) => ({ ...current, ...updated }))
       return true
     } catch (err) {
       setError(err.message || 'Error al actualizar el perfil')
@@ -129,6 +164,7 @@ function AuthProvider({ children }) {
       login,
       logout,
       updateUsername,
+      updateProfile,
     }),
     [error, isAuthenticated, loading, token, user]
   )
