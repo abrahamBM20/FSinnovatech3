@@ -66,6 +66,17 @@ app.put('/api/auth/profile/:id', async (req, res) => {
   }
 });
 
+app.get('/api/auth/profile/:id', async (req, res) => {
+  try {
+    const response = await axios.get(`${SERVICES.usuarios}/api/auth/profile/${req.params.id}`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({
+      error: error.response?.data?.message || 'Error al obtener perfil'
+    });
+  }
+});
+
 // ========== PROYECTOS (Proyectos Service) ==========
 app.get('/api/proyectos', async (req, res) => {
   try {
