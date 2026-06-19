@@ -6,6 +6,10 @@ export function useProfileViewModel() {
   const { user, error, loading, updateProfile } = useAuth()
   const [profile, setProfile] = useState(user || null)
   const [username, setUsername] = useState(user?.username || '')
+  const [firstName, setFirstName] = useState(user?.firstName || '')
+  const [lastName, setLastName] = useState(user?.lastName || '')
+  const [email, setEmail] = useState(user?.email || '')
+  const [phone, setPhone] = useState(user?.phone || '')
   const [role, setRole] = useState(user?.role || 'USER')
   const [feedback, setFeedback] = useState('')
 
@@ -24,10 +28,18 @@ export function useProfileViewModel() {
         const data = await response.json()
         setProfile(data)
         setUsername(data.username || '')
+        setFirstName(data.firstName || '')
+        setLastName(data.lastName || '')
+        setEmail(data.email || '')
+        setPhone(data.phone || '')
         setRole(data.role || 'USER')
       } catch {
         setProfile(user)
         setUsername(user?.username || '')
+        setFirstName(user?.firstName || '')
+        setLastName(user?.lastName || '')
+        setEmail(user?.email || '')
+        setPhone(user?.phone || '')
         setRole(user?.role || 'USER')
       }
     }
@@ -45,7 +57,14 @@ export function useProfileViewModel() {
       return
     }
 
-    const updated = await updateProfile({ username: normalized, role })
+    const updated = await updateProfile({
+      username: normalized,
+      firstName,
+      lastName,
+      email,
+      phone,
+      role,
+    })
     if (updated) {
       setFeedback('Perfil actualizado correctamente.')
       window.setTimeout(() => setFeedback(''), 3000)
@@ -56,6 +75,14 @@ export function useProfileViewModel() {
     user: profile,
     username,
     setUsername,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    email,
+    setEmail,
+    phone,
+    setPhone,
     role,
     setRole,
     feedback,

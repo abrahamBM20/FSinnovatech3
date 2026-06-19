@@ -22,10 +22,24 @@ function ProfileView() {
           <div className="kpi-card__value">{vm.user.username}</div>
         </div>
         <div className="grid-span-4 surface page-card--padded">
+          <span className="kpi-card__label">Nombre completo</span>
+          <div className="kpi-card__value">
+            {[vm.user.firstName, vm.user.lastName].filter(Boolean).join(' ') || 'Sin definir'}
+          </div>
+        </div>
+        <div className="grid-span-4 surface page-card--padded">
           <span className="kpi-card__label">Rol</span>
           <div className="kpi-card__value">{vm.user.role || 'USER'}</div>
         </div>
-        <div className="grid-span-4 surface page-card--padded">
+        <div className="grid-span-6 surface page-card--padded">
+          <span className="kpi-card__label">Email</span>
+          <div className="kpi-card__value">{vm.user.email || 'Sin definir'}</div>
+        </div>
+        <div className="grid-span-6 surface page-card--padded">
+          <span className="kpi-card__label">Teléfono</span>
+          <div className="kpi-card__value">{vm.user.phone || 'Sin definir'}</div>
+        </div>
+        <div className="grid-span-12 surface page-card--padded">
           <span className="kpi-card__label">Permisos</span>
           <div className="kpi-card__value">
             {vm.user.canManageUsers ? 'Usuarios' : 'Limitado'} / {vm.user.canViewAllProjects ? 'Proyectos globales' : 'Solo propios'}
@@ -34,6 +48,45 @@ function ProfileView() {
       </div>
 
       <form onSubmit={vm.handleSave} className="stack-list">
+        <div className="grid-cards">
+          <div className="grid-span-6 field-group">
+            <label htmlFor="profile-first-name">Nombre</label>
+            <input
+              id="profile-first-name"
+              type="text"
+              value={vm.firstName}
+              onChange={(event) => vm.setFirstName(event.target.value)}
+            />
+          </div>
+          <div className="grid-span-6 field-group">
+            <label htmlFor="profile-last-name">Apellido</label>
+            <input
+              id="profile-last-name"
+              type="text"
+              value={vm.lastName}
+              onChange={(event) => vm.setLastName(event.target.value)}
+            />
+          </div>
+          <div className="grid-span-6 field-group">
+            <label htmlFor="profile-email">Email</label>
+            <input
+              id="profile-email"
+              type="email"
+              value={vm.email}
+              onChange={(event) => vm.setEmail(event.target.value)}
+            />
+          </div>
+          <div className="grid-span-6 field-group">
+            <label htmlFor="profile-phone">Teléfono</label>
+            <input
+              id="profile-phone"
+              type="tel"
+              value={vm.phone}
+              onChange={(event) => vm.setPhone(event.target.value)}
+            />
+          </div>
+        </div>
+
         <div className="field-group">
           <label htmlFor="profile-username">Nuevo username</label>
           <input

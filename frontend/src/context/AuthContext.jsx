@@ -102,7 +102,7 @@ function AuthProvider({ children }) {
       }
 
       const updated = await response.json()
-      setUser((current) => ({ ...current, username: updated.username }))
+      setUser((current) => ({ ...current, ...updated }))
       return true
     } catch (err) {
       setError(err.message || 'Error al actualizar el perfil')
